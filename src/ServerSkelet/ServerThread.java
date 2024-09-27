@@ -1,10 +1,11 @@
+package ServerSkelet;
 
 import java.net.*;
 import java.io.*;
 public class ServerThread extends Thread{
 	Socket connSocket;
 	common c;
-	
+
 	public ServerThread(Socket connSocket,common c) {
 		this.connSocket = connSocket;
 		this.c=c; // Til Web-server opgaven skal denne ikke anvendes
