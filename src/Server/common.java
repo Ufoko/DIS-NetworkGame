@@ -1,4 +1,4 @@
-package ServerSkelet;
+package Server;
 public class common {
 	String tekst;
 

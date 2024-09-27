@@ -1,4 +1,4 @@
-package ServerSkelet;
+package Server;
 
 import java.net.*;
 public class Server {

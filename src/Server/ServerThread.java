@@ -1,4 +1,4 @@
-package ServerSkelet;
+package Server;
 
 import java.net.*;
 import java.io.*;
