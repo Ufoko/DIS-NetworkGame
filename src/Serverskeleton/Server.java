@@ -1,4 +1,4 @@
-package sock;
+
 import java.net.*;
 public class Server {
 	

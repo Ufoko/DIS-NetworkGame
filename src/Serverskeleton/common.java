@@ -1,4 +1,3 @@
-package sock;
 
 public class common {
 	String tekst;
