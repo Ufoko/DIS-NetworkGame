@@ -1,8 +1,9 @@
 package game;
 
-import java.net.*;
-import java.io.*;
 import javafx.application.Application;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 
 public class App {
 	public static void main(String[] args) throws Exception{
