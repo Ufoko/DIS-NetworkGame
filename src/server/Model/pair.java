@@ -1,8 +1,8 @@
-package game;
+package server.Model;
 
 public class pair {
-	int x;
-	int y;
+	 int x;
+	 int y;
 	public pair(int x, int y) {
 		super();
 		this.x = x;
