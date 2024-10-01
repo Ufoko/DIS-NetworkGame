@@ -22,7 +22,9 @@ public class ConnectionHandler extends Thread {
 
     public ConnectionHandler(Socket newSocket) {
         try {
+
             this.socket = newSocket;
+            System.out.println(socket.getInetAddress());
             inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             outToClient = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
@@ -37,9 +39,10 @@ public class ConnectionHandler extends Thread {
         String playerName = null;
         try {
             playerName = inFromClient.readLine();
+            System.out.println(playerName);
             // TODO Check om tidligere connection
-            Storage.add(GameLogic.newPlayer(playerName, socket.getInetAddress()));
-            Pair playerPos = GameLogic.getRandomFreePosition();
+            threadPlayer = GameLogic.newPlayer(playerName, socket.getInetAddress());
+            Storage.add(threadPlayer);
 
 
             //Concurrent time
@@ -58,7 +61,7 @@ public class ConnectionHandler extends Thread {
         }
     }
 
-    private synchronized void informClients() throws IOException  {
+    private synchronized void informClients() throws IOException {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         for (Thread thread : threadSet) {
             for (Player player : Storage.getPlayers()) {
@@ -73,18 +76,23 @@ public class ConnectionHandler extends Thread {
     }
 
     private void playerMovement() throws IOException {
+        System.out.println("Movement");
         switch (inFromClient.readLine().toLowerCase()) {
             case "w":
                 playerMoved(0, -1, "up");
+                System.out.println("w");
                 break;
             case "s":
                 playerMoved(0, +1, "down");
+                System.out.println("s");
                 break;
             case "a":
                 playerMoved(-1, 0, "left");
+                System.out.println("a");
                 break;
             case "d":
                 playerMoved(+1, 0, "right");
+                System.out.println("d");
                 break;
             case "x":
                 System.exit(0);
@@ -105,8 +113,10 @@ public class ConnectionHandler extends Thread {
     private void updateOtherThreads() throws IOException {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         for (Thread thread : threadSet) {
-            ConnectionHandler tempHandler = (ConnectionHandler) thread;
-            tempHandler.update();
+            if ((thread instanceof ConnectionHandler)) {
+                ConnectionHandler tempHandler = (ConnectionHandler) thread;
+                tempHandler.update();
+            }
         }
 
     }
