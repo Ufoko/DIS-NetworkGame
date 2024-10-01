@@ -1,5 +1,6 @@
 package Client;
 
+
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
