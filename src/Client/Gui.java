@@ -100,6 +100,16 @@ public class Gui extends Stage {
         this.setScene(scene);
     }
 
+    //afslut med "slut"
+    // "navn,xpos,ypos,direction,point"
+    public void receiveUpdates() throws IOException {
+        while(true) {
+            String in = inFromServer.readLine();
+            int x =
+        }
+        updatePlayerLocation();
+        updateScoreboard();
+    }
     public void registerKeypress() {
         addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             try {
@@ -108,14 +118,6 @@ public class Gui extends Stage {
             } catch (IOException e) {}
         });
     }
-
-    public void receiveUpdate() {
-
-        updatePlayerLocation();
-        updateScoreboard();
-    }
-// "navn,xpos,ypos,direction,point"
-    //afslut med "slut"
     private void updateScoreboard() {
 
     }
