@@ -7,6 +7,7 @@ public class Player {
     Pair location;
     int point;
     String direction;
+
     InetAddress ipAdress;
 
     public Player(String name, Pair loc, String direction, InetAddress ipAdress) {
@@ -53,18 +54,6 @@ public class Player {
 
     public void addPoints(int p) {
         point += p;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public int getPoint() {
-        return point;
-    }
-
-    public InetAddress getIpAdress() {
-        return ipAdress;
     }
 
     public String toString() {

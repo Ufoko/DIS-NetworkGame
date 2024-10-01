@@ -1,6 +1,9 @@
 package Client;
 
-
+import game.GameLogic;
+import game.Generel;
+import game.Player;
+import game.pair;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
