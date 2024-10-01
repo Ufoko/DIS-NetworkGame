@@ -25,7 +25,7 @@ public class Storage
 		return liste.size();
 	}
 
-	public static List<Player> getListe() {
+	public static List<Player> getPlayers() {
 		return liste;
 	}
 }
