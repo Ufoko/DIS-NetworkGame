@@ -1,7 +1,5 @@
 package server.Model;
 
-import game.Gui;
-import server.Controller.Server;
 import server.Storage.Storage;
 
 import java.net.InetAddress;
@@ -44,7 +42,7 @@ public class GameLogic {
 			if (Generel.board[y].charAt(x)==' ') // er det gulv ?
 			{
 				foundfreepos = true;
-				for (Player p: Storage.getListe()) {
+				for (Player p: Storage.getPlayers()) {
 					if (p.getXpos()==x && p.getYpos()==y) //pladsen optaget af en anden
 						foundfreepos = false;
 				}
@@ -58,33 +56,20 @@ public class GameLogic {
 	{
 		player.direction = direction;
 		int x = player.getXpos(),y = player.getYpos();
-
-		if (game.Generel.board[y+delta_y].charAt(x+delta_x)=='w') {
-			player.addPoints(-1);
+		Player colPlayer = getPlayerAt(x+delta_x,y+delta_y);
+		if (Generel.board[y+delta_y].charAt(x+delta_x)=='w' || colPlayer != null) {
+			//player.addPoints(-1);
 		}
 		else {
-			// collision detection
-			server.Model.Player colPlayer = getPlayerAt(x+delta_x,y+delta_y);
-			if (colPlayer!=null) {
-				player.addPoints(10);
-				//update the other player
-				colPlayer.addPoints(-10);
-				Pair pa = getRandomFreePosition();
-				colPlayer.setLocation(pa);
-				Pair oldpos = new Pair(x+delta_x,y+delta_y);
-				Gui.movePlayerOnScreen(oldpos,pa,colPlayer.direction);
-			} else
-				player.addPoints(1);
 			Pair oldpos = player.getLocation();
 			Pair newpos = new Pair(x+delta_x,y+delta_y);
-			Gui.movePlayerOnScreen(oldpos,newpos,direction);
 			player.setLocation(newpos);
 		}
 
 
 	}
-	public static Server.Player getPlayerAt(int x, int y) {
-		for (Server.Player p : players) {
+	public static Player getPlayerAt(int x, int y) {
+		for (Player p : Storage.getPlayers()) {
 			if (p.getXpos()==x && p.getYpos()==y) {
 				return p;
 			}
