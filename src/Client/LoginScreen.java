@@ -65,5 +65,6 @@ public class LoginScreen extends Application {
 
     private void openGui(DataOutputStream outToServer, BufferedReader inFromServer) throws Exception {
         Gui gui = new Gui(outToServer, inFromServer);
+        gui.showAndWait();
     }
 }

@@ -17,7 +17,9 @@ import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Gui extends Stage {
 
@@ -33,7 +35,7 @@ public class Gui extends Stage {
     private TextArea scoreList;
     private DataOutputStream outToServer;
     private BufferedReader inFromServer;
-    private char[] eligibleKeypresses = {'a','s','d','w','x'};
+    private String[] eligibleKeypresses = {"a","s","d","w","x"};
 
     // -------------------------------------------
     // | Maze: (0,0)              | Score: (1,0) |
@@ -98,31 +100,55 @@ public class Gui extends Stage {
 
         Scene scene = new Scene(grid, scene_width, scene_height);
         this.setScene(scene);
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            try {
+                String keypress = event.getText();
+                if (Arrays.asList(eligibleKeypresses).contains(keypress)) outToServer.writeBytes(keypress +"\n");
+            } catch (IOException e) {}
+        });
     }
 
     //afslut med "slut"
     // "navn,xpos,ypos,direction,point"
     public void receiveUpdates() throws IOException {
         while(true) {
-            String in = inFromServer.readLine();
-            int x =
+            String input = inFromServer.readLine();
+            int x = 0, y = 0, points = 0;
+            String name = "", dir = "";
+            List<ClientPlayer> playerList = new ArrayList<>();
+            List<ClientPlayer> oldPlayerList = new ArrayList<>();
+            while (!input.equals("slut")) {
+                String[] in = input.split(",");
+                name = in[0];
+                x = Integer.parseInt(in[1]);
+                y = Integer.parseInt(in[2]);
+                dir = in[3];
+                points = Integer.parseInt(in[4]);
+                playerList.add(new ClientPlayer(name, x, y, dir, points));
+                input = inFromServer.readLine();
+            }
+            updateGui(playerList, oldPlayerList);
+            oldPlayerList = new ArrayList<>(playerList);
+            playerList.clear();
         }
-        updatePlayerLocation();
-        updateScoreboard();
-    }
-    public void registerKeypress() {
-        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-            try {
-                String keypress = event.getCharacter();
-                if (Arrays.asList(eligibleKeypresses).contains(keypress)) outToServer.writeBytes(keypress);
-            } catch (IOException e) {}
-        });
-    }
-    private void updateScoreboard() {
 
     }
+    private void updateGui(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList) {
+        updatePlayerLocation(playerList, oldPlayerList);
+        updateScoreboard(playerList);
+    }
+    private void updateScoreboard(List<ClientPlayer> playerList) {
+        scoreList.clear();
+        for (ClientPlayer clientPlayer : playerList) {
+            scoreList.appendText(clientPlayer.getName() + ":    " + clientPlayer.getPoint() + " points");
+        }
+    }
 
-    private void updatePlayerLocation() {
+    private void updatePlayerLocation(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList) {
+        if (!oldPlayerList.isEmpty()) {
+
+        }
+
     }
     /*
     public void start(Stage primaryStage) {
