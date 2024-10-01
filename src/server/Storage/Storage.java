@@ -5,7 +5,7 @@ import server.Model.Player;
 import java.util.ArrayList;
 import java.util.List;
 
-public class playerStorage
+public class Storage
 {
 	private static List<Player> liste = new ArrayList<Player>();
 	

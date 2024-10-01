@@ -1,25 +1,30 @@
 package server.Model;
 
+import java.net.InetAddress;
+
 public class Player {
     String name;
-    pair location;
+    Pair location;
     int point;
     String direction;
 
-    public Player(String name, pair loc, String direction) {
+    InetAddress ipAdress;
+
+    public Player(String name, Pair loc, String direction, InetAddress ipAdress) {
         this.name = name;
         this.location = loc;
         this.direction = direction;
         this.point = 0;
+        this.ipAdress = ipAdress;
     }
 
     ;
 
-    public pair getLocation() {
+    public Pair getLocation() {
         return this.location;
     }
 
-    public void setLocation(pair p) {
+    public void setLocation(Pair p) {
         this.location = p;
     }
 

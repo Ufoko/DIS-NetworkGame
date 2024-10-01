@@ -1,9 +1,5 @@
 package Client;
 
-import java.net.*;
-import java.io.*;
-import java.rmi.ServerError;
-
 import game.GameLogic;
 import game.Gui;
 import javafx.application.Application;
