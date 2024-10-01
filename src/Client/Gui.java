@@ -1,11 +1,5 @@
 package Client;
 
-import game.GameLogic;
-import game.Generel;
-import game.Player;
-import game.pair;
-import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -19,6 +13,11 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.util.Arrays;
+
 public class Gui extends Stage {
 
     public static final int size = 30;
@@ -31,6 +30,9 @@ public class Gui extends Stage {
 
     private static Label[][] fields;
     private TextArea scoreList;
+    private DataOutputStream outToServer;
+    private BufferedReader inFromServer;
+    private char[] eligibleKeypresses = {'a','s','d','w','x'};
 
     // -------------------------------------------
     // | Maze: (0,0)              | Score: (1,0) |
@@ -39,7 +41,9 @@ public class Gui extends Stage {
     // |                          | (1,1)        |
     // -------------------------------------------
 
-    public Gui() throws Exception {
+    public Gui(DataOutputStream outToServer, BufferedReader inFromServer) throws Exception {
+        this.outToServer = outToServer;
+        this.inFromServer = inFromServer;
         GridPane pane = new GridPane();
         pane.setHgap(10);
         pane.setVgap(10);
@@ -71,7 +75,7 @@ public class Gui extends Stage {
         fields = new Label[20][20];
         for (int j = 0; j < 20; j++) {
             for (int i = 0; i < 20; i++) {
-                switch (game.Generel.board[j].charAt(i)) {
+                switch (Generel.board[j].charAt(i)) {
                     case 'w':
                         fields[i][j] = new Label("", new ImageView(image_wall));
                         break;
@@ -86,7 +90,6 @@ public class Gui extends Stage {
         }
         scoreList.setEditable(false);
 
-
         grid.add(mazeLabel, 0, 0);
         grid.add(scoreLabel, 1, 0);
         grid.add(boardGrid, 0, 1);
@@ -95,39 +98,33 @@ public class Gui extends Stage {
         Scene scene = new Scene(grid, scene_width, scene_height);
         this.setScene(scene);
     }
+
+    public void registerKeypress() {
+        addEventFilter(KeyEvent.KEY_PRESSED, event -> {
+            try {
+                String keypress = event.getCharacter();
+                if (Arrays.asList(eligibleKeypresses).contains(keypress)) outToServer.writeBytes(keypress);
+            } catch (IOException e) {}
+        });
+    }
+
+    public void receiveUpdate() {
+
+        updatePlayerLocation();
+        updateScoreboard();
+    }
+// "navn,xpos,ypos,direction,point"
+    //afslut med "slut"
+    private void updateScoreboard() {
+
+    }
+
+    private void updatePlayerLocation() {
+    }
     /*
     public void start(Stage primaryStage) {
-        try {
-
-
-            GridPane grid = new GridPane();
-
-
-
-
-            scene.addEventFilter(KeyEvent.KEY_PRESSED, event -> {
-                switch (event.getCode()) {
-                    case UP:
-                        playerMoved(0, -1, "up");
-                        break;
-                    case DOWN:
-                        playerMoved(0, +1, "down");
-                        break;
-                    case LEFT:
-                        playerMoved(-1, 0, "left");
-                        break;
-                    case RIGHT:
-                        playerMoved(+1, 0, "right");
-                        break;
-                    case ESCAPE:
-                        System.exit(0);
-                    default:
-                        break;
-                }
-            });
-
-
-            // Putting default players on screen
+        try {GridPane grid = new GridPane();
+                    // Putting default players on screen
             for (int i = 0; i < GameLogic.players.size(); i++) {
                 fields[GameLogic.players.get(i).getXpos()][GameLogic.players.get(i).getYpos()].setGraphic(new ImageView(hero_up));
             }
@@ -137,12 +134,14 @@ public class Gui extends Stage {
         }
     }
 */
+    /*
     public static void removePlayerOnScreen(pair oldpos) {
         Platform.runLater(() -> {
             fields[oldpos.getX()][oldpos.getY()].setGraphic(new ImageView(image_floor));
         });
     }
-
+*/
+    /*
     public static void placePlayerOnScreen(pair newpos, String direction) {
         Platform.runLater(() -> {
             int newx = newpos.getX();
@@ -165,24 +164,23 @@ public class Gui extends Stage {
             ;
         });
     }
-
+*/
+    /*
     public static void movePlayerOnScreen(pair oldpos, pair newpos, String direction) {
         removePlayerOnScreen(oldpos);
         placePlayerOnScreen(newpos, direction);
     }
-
-
+*/
+    //TODO fiks scorelist
+    /*
     public void updateScoreTable() {
         Platform.runLater(() -> {
             scoreList.setText(getScoreList());
         });
     }
+    */
 
-    public void playerMoved(int delta_x, int delta_y, String direction) {
-        GameLogic.updatePlayer(delta_x, delta_y, direction);
-        updateScoreTable();
-    }
-
+    /*
     public String getScoreList() {
         StringBuffer b = new StringBuffer(100);
         for (Player p : GameLogic.players) {
@@ -190,7 +188,7 @@ public class Gui extends Stage {
         }
         return b.toString();
     }
-
+*/
 
 }
 

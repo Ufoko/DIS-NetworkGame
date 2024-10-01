@@ -1,7 +1,5 @@
 package Client;
 
-import game.GameLogic;
-import game.Gui;
 import javafx.application.Application;
 
 public class App {

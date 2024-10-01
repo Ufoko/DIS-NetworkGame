@@ -1,6 +1,5 @@
 package Client;
 
-import game.Gui;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -10,8 +9,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.Socket;
 
 public class LoginScreen extends Application {
@@ -40,23 +41,29 @@ public class LoginScreen extends Application {
         grid.add(btnOk, 1, 3);
         btnOk.setOnAction(event -> {
             if (!txfIP.getText().equals("") && !txfName.equals("")) {
-                try {
-                    Socket clientSocket = new Socket(txfIP.getText(), 6788);
-                    DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                    outToServer.writeBytes(txfName.getText() + '\n');
-                    Thread.sleep(3000);
-                    openGui();
-                } catch (IOException e) {
-                    grid.add(lblErr, 2, 2);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+                if (!txfName.getText().toLowerCase().equals("slut")) {
+                    try {
+                        Socket clientSocket = new Socket(txfIP.getText(), 6788);
+                        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
+                        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                        outToServer.writeBytes(txfName.getText() + '\n');
+                        Thread.sleep(3000);
+                        try {
+                            openGui(outToServer, inFromServer);
+                        } catch (Exception e) {
+                            throw new RuntimeException(e);
+                        }
+                    } catch (IOException e) {
+                        grid.add(lblErr, 2, 2);
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
                 }
             }
         });
     }
 
-    private void openGui() {
-        Gui gui = new Gui();
-
+    private void openGui(DataOutputStream outToServer, BufferedReader inFromServer) throws Exception {
+        Gui gui = new Gui(outToServer, inFromServer);
     }
 }
