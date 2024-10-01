@@ -22,6 +22,7 @@ public class LoginScreen extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         GridPane grid = new GridPane();
+        primaryStage.setTitle("LOGIN TIL TREASURE HUNTER MED LARA CROFT (TM)");
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(0, 10, 0, 10));
@@ -44,7 +45,7 @@ public class LoginScreen extends Application {
                     DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
                     outToServer.writeBytes(txfName.getText() + '\n');
                     Thread.sleep(3000);
-                    Application.launch(Gui.class);
+                    openGui();
                 } catch (IOException e) {
                     grid.add(lblErr, 2, 2);
                 } catch (InterruptedException e) {
@@ -52,5 +53,10 @@ public class LoginScreen extends Application {
                 }
             }
         });
+    }
+
+    private void openGui() {
+        Gui gui = new Gui();
+
     }
 }
