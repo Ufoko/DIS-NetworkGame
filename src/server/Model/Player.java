@@ -8,6 +8,7 @@ public class Player {
     int point;
     String direction;
     InetAddress ipAdress;
+    boolean hasKey = false;
 
     public Player(String name, Pair loc, String direction, InetAddress ipAdress) {
         this.name = name;

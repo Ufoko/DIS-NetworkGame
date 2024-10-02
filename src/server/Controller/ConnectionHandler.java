@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ConnectionHandler extends Thread {
 
@@ -41,8 +42,18 @@ public class ConnectionHandler extends Thread {
             playerName = inFromClient.readLine();
             System.out.println(playerName);
             // TODO Check om tidligere connection
-            threadPlayer = GameLogic.newPlayer(playerName, socket.getInetAddress());
-            Storage.add(threadPlayer);
+            threadPlayer = Storage.getPlayers().stream().
+                    filter(player -> player.getIpAdress().equals(socket.getInetAddress())).
+                    collect(Collectors.toList()).getFirst();
+            if(threadPlayer != null){
+                //TODO Spiller er reconnected, threadPlayer skal sættes til den fundne spiller,
+                //TODO samt tjekke om han kan spawnes ind
+                //TODO Der skal nok også være et check om spillet er i gang
+                //TODO fx hvis man ikke må joine midtvejs
+            }else{
+                threadPlayer = GameLogic.newPlayer(playerName, socket.getInetAddress());
+                Storage.add(threadPlayer);
+            }
 
 
             //Concurrent time
