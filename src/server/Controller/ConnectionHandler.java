@@ -11,6 +11,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -42,17 +43,22 @@ public class ConnectionHandler extends Thread {
             playerName = inFromClient.readLine();
             System.out.println(playerName);
             // TODO Check om tidligere connection
-            threadPlayer = Storage.getPlayers().stream().
-                    filter(player -> player.getIpAdress().equals(socket.getInetAddress())).
-                    collect(Collectors.toList()).getFirst();
-            if(threadPlayer != null){
+            try { //smider exceptions på tom liste, midlertidig løsning så skidtet kører
+                threadPlayer = Storage.getPlayers().stream().
+                        filter(player -> player.getIpAdress().equals(socket.getInetAddress())).
+                        collect(Collectors.toList()).getFirst();
+            } catch (NoSuchElementException e) {
+                threadPlayer = null;
+            }
+            if (threadPlayer != null) {
                 //TODO Spiller er reconnected, threadPlayer skal sættes til den fundne spiller,
                 //TODO samt tjekke om han kan spawnes ind
                 //TODO Der skal nok også være et check om spillet er i gang
                 //TODO fx hvis man ikke må joine midtvejs
-            }else{
+            } else {
                 threadPlayer = GameLogic.newPlayer(playerName, socket.getInetAddress());
                 Storage.add(threadPlayer);
+                informClients();
             }
 
 
@@ -74,6 +80,7 @@ public class ConnectionHandler extends Thread {
 
     private synchronized void informClients() throws IOException {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        System.out.println("sent");
         for (Thread thread : threadSet) {
             for (Player player : Storage.getPlayers()) {
                 outToClient.writeBytes(player.getName() + ","
@@ -120,7 +127,6 @@ public class ConnectionHandler extends Thread {
     public void update() throws IOException {
 
     }
-
     private void updateOtherThreads() throws IOException {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         for (Thread thread : threadSet) {

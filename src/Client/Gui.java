@@ -1,6 +1,7 @@
 package Client;
 
 
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -35,7 +36,7 @@ public class Gui extends Stage {
     private TextArea scoreList;
     private DataOutputStream outToServer;
     private BufferedReader inFromServer;
-    private String[] eligibleKeypresses = {"a","s","d","w","x"};
+    private String[] eligibleKeypresses = {"a", "s", "d", "w", "x"};
 
     // -------------------------------------------
     // | Maze: (0,0)              | Score: (1,0) |
@@ -57,6 +58,7 @@ public class Gui extends Stage {
     }
 
     public void initContent(GridPane grid) throws Exception {
+        System.out.println("start init");
         Text mazeLabel = new Text("Maze:");
         mazeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 
@@ -103,16 +105,22 @@ public class Gui extends Stage {
         addEventFilter(KeyEvent.KEY_PRESSED, event -> {
             try {
                 String keypress = event.getText();
-                if (Arrays.asList(eligibleKeypresses).contains(keypress)) outToServer.writeBytes(keypress +"\n");
-            } catch (IOException e) {}
+                if (Arrays.asList(eligibleKeypresses).contains(keypress)) outToServer.writeBytes(keypress + "\n");
+            } catch (IOException e) {
+            }
         });
+        System.out.println("slut init");
+        //TODO receiveUpdates() dræber gui-oprettelsen. client kan stadig modtage data fra server men der er ingen gui
+        //receiveUpdates();
     }
 
     //afslut med "slut"
     // "navn,xpos,ypos,direction,point"
     public void receiveUpdates() throws IOException {
-        while(true) {
+        while (true) {
+            System.out.print("læser ");
             String input = inFromServer.readLine();
+            System.out.println(" " + input);
             int x = 0, y = 0, points = 0;
             String name = "", dir = "";
             List<ClientPlayer> playerList = new ArrayList<>();
@@ -133,20 +141,27 @@ public class Gui extends Stage {
         }
 
     }
+
     private void updateGui(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList) {
         updatePlayerLocation(playerList, oldPlayerList);
         updateScoreboard(playerList);
     }
+
     private void updateScoreboard(List<ClientPlayer> playerList) {
         scoreList.clear();
         for (ClientPlayer clientPlayer : playerList) {
-            scoreList.appendText(clientPlayer.getName() + ":    " + clientPlayer.getPoint() + " points");
+            scoreList.appendText(clientPlayer.getName() + ":\t" + clientPlayer.getPoint() + " points\n");
         }
     }
 
     private void updatePlayerLocation(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList) {
         if (!oldPlayerList.isEmpty()) {
-
+            for (ClientPlayer old : oldPlayerList) {
+                removePlayerOnScreen(old);
+            }
+        }
+        for (ClientPlayer newP : playerList) {
+            placePlayerOnScreen(newP);
         }
 
     }
@@ -163,15 +178,32 @@ public class Gui extends Stage {
         }
     }
 */
-    /*
-    public static void removePlayerOnScreen(pair oldpos) {
-        Platform.runLater(() -> {
+
+    public static void removePlayerOnScreen(ClientPlayer player) {
+        fields[player.getX()][player.getY()].setGraphic((new ImageView(image_floor)));
+
+        /*Platform.runLater(() -> {
             fields[oldpos.getX()][oldpos.getY()].setGraphic(new ImageView(image_floor));
         });
+        */
     }
-*/
-    /*
-    public static void placePlayerOnScreen(pair newpos, String direction) {
+
+    public static void placePlayerOnScreen(ClientPlayer player) {
+        //TODO overvej om platform.runLater() skal bruges
+        String dir = player.getDirection();
+        ImageView dirImage;
+        switch (dir) {
+            case "up":
+                dirImage = new ImageView(hero_up);
+            case "right":
+                dirImage = new ImageView(hero_right);
+            case "left":
+                dirImage = new ImageView(hero_left);
+            default:
+                dirImage = new ImageView(hero_down);
+        }
+        fields[player.getX()][player.getY()].setGraphic(dirImage);
+        /*
         Platform.runLater(() -> {
             int newx = newpos.getX();
             int newy = newpos.getY();
@@ -192,22 +224,17 @@ public class Gui extends Stage {
             }
             ;
         });
+
+         */
     }
-*/
+
+
     /*
     public static void movePlayerOnScreen(pair oldpos, pair newpos, String direction) {
         removePlayerOnScreen(oldpos);
         placePlayerOnScreen(newpos, direction);
     }
 */
-    //TODO fiks scorelist
-    /*
-    public void updateScoreTable() {
-        Platform.runLater(() -> {
-            scoreList.setText(getScoreList());
-        });
-    }
-    */
 
     /*
     public String getScoreList() {
