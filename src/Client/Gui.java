@@ -58,7 +58,6 @@ public class Gui extends Stage {
     }
 
     public void initContent(GridPane grid) throws Exception {
-        System.out.println("start init");
         Text mazeLabel = new Text("Maze:");
         mazeLabel.setFont(Font.font("Arial", FontWeight.BOLD, 20));
 
@@ -109,61 +108,35 @@ public class Gui extends Stage {
             } catch (IOException e) {
             }
         });
-        System.out.println("slut init");
-        //TODO receiveUpdates() dræber gui-oprettelsen. client kan stadig modtage data fra server men der er ingen gui
-        //receiveUpdates();
     }
 
     //afslut med "slut"
     // "navn,xpos,ypos,direction,point"
-    public void receiveUpdates() throws IOException {
-        while (true) {
-            System.out.print("læser ");
-            String input = inFromServer.readLine();
-            System.out.println(" " + input);
-            int x = 0, y = 0, points = 0;
-            String name = "", dir = "";
-            List<ClientPlayer> playerList = new ArrayList<>();
-            List<ClientPlayer> oldPlayerList = new ArrayList<>();
-            while (!input.equals("slut")) {
-                String[] in = input.split(",");
-                name = in[0];
-                x = Integer.parseInt(in[1]);
-                y = Integer.parseInt(in[2]);
-                dir = in[3];
-                points = Integer.parseInt(in[4]);
-                playerList.add(new ClientPlayer(name, x, y, dir, points));
-                input = inFromServer.readLine();
-            }
-            updateGui(playerList, oldPlayerList);
-            oldPlayerList = new ArrayList<>(playerList);
-            playerList.clear();
-        }
-
-    }
-
-    private void updateGui(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList) {
-        updatePlayerLocation(playerList, oldPlayerList);
-        updateScoreboard(playerList);
+    public void updateGui(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList) {
+        Platform.runLater(() -> {
+            updatePlayerLocation(playerList, oldPlayerList);
+            updateScoreboard(playerList);
+        });
     }
 
     private void updateScoreboard(List<ClientPlayer> playerList) {
+        //Platform.runLater(() -> {
         scoreList.clear();
         for (ClientPlayer clientPlayer : playerList) {
             scoreList.appendText(clientPlayer.getName() + ":\t" + clientPlayer.getPoint() + " points\n");
         }
+        //});
     }
 
     private void updatePlayerLocation(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList) {
-        if (!oldPlayerList.isEmpty()) {
-            for (ClientPlayer old : oldPlayerList) {
-                removePlayerOnScreen(old);
-            }
+        //Platform.runLater(() -> {
+        for (ClientPlayer old : oldPlayerList) {
+            removePlayerOnScreen(old);
         }
         for (ClientPlayer newP : playerList) {
             placePlayerOnScreen(newP);
         }
-
+        //});
     }
     /*
     public void start(Stage primaryStage) {
@@ -179,7 +152,7 @@ public class Gui extends Stage {
     }
 */
 
-    public static void removePlayerOnScreen(ClientPlayer player) {
+    public void removePlayerOnScreen(ClientPlayer player) {
         fields[player.getX()][player.getY()].setGraphic((new ImageView(image_floor)));
 
         /*Platform.runLater(() -> {
@@ -188,19 +161,22 @@ public class Gui extends Stage {
         */
     }
 
-    public static void placePlayerOnScreen(ClientPlayer player) {
-        //TODO overvej om platform.runLater() skal bruges
+    public void placePlayerOnScreen(ClientPlayer player) {
         String dir = player.getDirection();
         ImageView dirImage;
         switch (dir) {
             case "up":
                 dirImage = new ImageView(hero_up);
+                break;
             case "right":
                 dirImage = new ImageView(hero_right);
+                break;
             case "left":
                 dirImage = new ImageView(hero_left);
+                break;
             default:
                 dirImage = new ImageView(hero_down);
+                break;
         }
         fields[player.getX()][player.getY()].setGraphic(dirImage);
         /*

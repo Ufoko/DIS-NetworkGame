@@ -80,16 +80,17 @@ public class ConnectionHandler extends Thread {
 
     private synchronized void informClients() throws IOException {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        System.out.println("sent");
         for (Thread thread : threadSet) {
-            for (Player player : Storage.getPlayers()) {
-                outToClient.writeBytes(player.getName() + ","
-                        + threadPlayer.getXpos() + ","
-                        + threadPlayer.getYpos() + ","
-                        + threadPlayer.getDirection() + ","
-                        + threadPlayer.getPoint() + "\n");
+            if (thread instanceof ConnectionHandler) {
+                for (Player player : Storage.getPlayers()) {
+                    outToClient.writeBytes(player.getName() + ","
+                            + threadPlayer.getXpos() + ","
+                            + threadPlayer.getYpos() + ","
+                            + threadPlayer.getDirection() + ","
+                            + threadPlayer.getPoint() + "\n");
+                }
+                outToClient.writeBytes("slut\n");
             }
-            outToClient.writeBytes("slut");
         }
     }
 

@@ -14,11 +14,16 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class LoginScreen extends Application {
     TextField txfName, txfIP;
     Button btnOk;
     Label lblErr = new Label("enter name and valid ip!");
+    DataOutputStream outToServer;
+    BufferedReader inFromServer;
+    private Gui gui;
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -44,8 +49,8 @@ public class LoginScreen extends Application {
                 if (!txfName.getText().toLowerCase().equals("slut")) {
                     try {
                         Socket clientSocket = new Socket(txfIP.getText(), 6788);
-                        DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
-                        BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+                        outToServer = new DataOutputStream(clientSocket.getOutputStream());
+                        inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                         outToServer.writeBytes(txfName.getText() + '\n');
                         Thread.sleep(3000);
                         try {
@@ -64,9 +69,9 @@ public class LoginScreen extends Application {
     }
 
     private void openGui(DataOutputStream outToServer, BufferedReader inFromServer) throws Exception {
-        Gui gui = new Gui(outToServer, inFromServer);
+        gui = new Gui(outToServer, inFromServer);
+        ClientReceiver cr = new ClientReceiver(gui, inFromServer, outToServer);
+        cr.start();
         gui.show();
-        //Thread.sleep(15000);
-        //gui.receiveUpdates();
     }
 }
