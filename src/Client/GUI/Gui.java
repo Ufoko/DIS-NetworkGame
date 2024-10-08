@@ -119,10 +119,10 @@ public class Gui extends Stage {
 
     public void ShowWinner(String name, int points) {
             Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
                 alert.setTitle("Spillet er ovre");
-                alert.setHeaderText("headerText");
-                alert.setContentText("Vinder er: " + name + " med " + points + " point");
+                alert.setHeaderText("Vinder er fundet");
+                alert.setContentText("Vinder er " + name + " med " + points + " point");
                 alert.showAndWait();
             });
     }
