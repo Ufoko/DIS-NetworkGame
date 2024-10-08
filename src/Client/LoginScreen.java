@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class LoginScreen extends Application {
@@ -24,6 +25,7 @@ public class LoginScreen extends Application {
     DataOutputStream outToServer;
     BufferedReader inFromServer;
     private Gui gui;
+    private String[] illegalNames = {"slutK", "slutP", "slutC", "vinder"};
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -45,8 +47,8 @@ public class LoginScreen extends Application {
         grid.add(txfIP, 1, 2);
         grid.add(btnOk, 1, 3);
         btnOk.setOnAction(event -> {
-            if (!txfIP.getText().equals("") && !txfName.equals("")) {
-                if (!txfName.getText().toLowerCase().equals("slut")) {
+            if (!txfIP.getText().equals("") && !txfName.getText().equals("")) {
+                if (!Arrays.asList(illegalNames).contains(txfName.getText())) {
                     try {
                         Socket clientSocket = new Socket(txfIP.getText(), 6788);
                         outToServer = new DataOutputStream(clientSocket.getOutputStream());
