@@ -6,6 +6,7 @@ import Client.Objects.ClientPlayer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -114,6 +115,11 @@ public class Gui extends Stage {
             } catch (IOException e) {
             }
         });
+    }
+
+    public void ShowWinner(String name, int points) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION, "Vinder er: " + name + " med " + points + " point");
+        alert.show();
     }
 
     //afslut med "slut"
@@ -227,6 +233,7 @@ public class Gui extends Stage {
 
          */
     }
+
 
 
     /*

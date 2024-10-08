@@ -165,7 +165,7 @@ public class ConnectionHandler extends Thread {
     }
 
     private void gameEnded(Player winnerPlayer) throws IOException {
-        outToClient.writeBytes("vinder"
+        outToClient.writeBytes("vinder" + ","
                 + winnerPlayer.getName() + ","
                 + winnerPlayer.getPoint()
                 + "\n");

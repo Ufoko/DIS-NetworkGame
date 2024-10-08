@@ -100,10 +100,19 @@ public class ClientReceiver extends Thread {
                 chests.clear();
                 keys.clear();
                 playerList.clear();
-            }
-            if (input.equals("vinder")) {
+            } else if (input.contains("vinder")) {
 
+                int points = 0;
+                String name = "";
+                String[] in = null;
+                in = input.split(",");
+                name = in[1];
+                points = Integer.parseInt(in[2]);
+
+                gui.ShowWinner(name, points);
             }
+
         }
     }
 }
+
