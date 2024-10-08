@@ -1,4 +1,4 @@
-package Client;
+package Client.Objects;
 
 public class ClientPlayer {
     String name;

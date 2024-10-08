@@ -1,4 +1,4 @@
-package Client;
+package Client.GUI;
 
 public class Generel {
 	public static  String[] board = {    // 20x20

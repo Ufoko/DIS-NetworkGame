@@ -43,7 +43,7 @@ public class ConnectionHandler extends Thread {
             playerName = inFromClient.readLine();
             // TODO Check om tidligere connection
             try { //smider exceptions på tom liste, midlertidig løsning så skidtet kører
-                threadPlayer = Storage.getPlayers().stream().
+                threadPlayer = Storage.getInactivePlayerList().stream().
                         filter(player -> player.getIpAdress().equals(socket.getInetAddress())).
                         collect(Collectors.toList()).getFirst();
 
@@ -51,10 +51,8 @@ public class ConnectionHandler extends Thread {
                 threadPlayer = null;
             }
             if (threadPlayer != null) {
-                //TODO Spiller er reconnected, threadPlayer skal sættes til den fundne spiller,
-                //TODO samt tjekke om han kan spawnes ind
-                //TODO Der skal nok også være et check om spillet er i gang
-                //TODO fx hvis man ikke må joine midtvejs
+                Storage.reAddFormerInactive(threadPlayer);
+                threadPlayer.setLocation(GameLogic.getRandomFreePosition());
             } else {
                 threadPlayer = GameLogic.newPlayer(playerName, socket.getInetAddress());
                 //Spawn initial things
@@ -82,6 +80,7 @@ public class ConnectionHandler extends Thread {
 
     //"navn,xpos,ypos,direction,point,chestx,chesty,keyx,keyy"
     private synchronized void informClients() throws IOException {
+        outToClient.writeBytes("info\n");
         for (Player player : Storage.getPlayers()) {
             outToClient.writeBytes(player.getName() + ","
                     + player.getXpos() + ","
@@ -108,41 +107,69 @@ public class ConnectionHandler extends Thread {
     }
 
     private void playerMovement() throws IOException {
-        switch (inFromClient.readLine().toLowerCase()) {
-            case "w":
-                playerMoved(0, -1, "up");
-                System.out.println("w");
-                break;
-            case "s":
-                playerMoved(0, +1, "down");
-                System.out.println("s");
-                break;
-            case "a":
-                playerMoved(-1, 0, "left");
-                System.out.println("a");
-                break;
-            case "d":
-                playerMoved(+1, 0, "right");
-                System.out.println("d");
-                break;
-            case "x":
-                System.exit(0);
+        try {
+
+            switch (inFromClient.readLine().toLowerCase()) {
+                case "w":
+                    playerMoved(0, -1, "up");
+                    System.out.println("w");
+                    break;
+                case "s":
+                    playerMoved(0, +1, "down");
+                    System.out.println("s");
+                    break;
+                case "a":
+                    playerMoved(-1, 0, "left");
+                    System.out.println("a");
+                    break;
+                case "d":
+                    playerMoved(+1, 0, "right");
+                    System.out.println("d");
+                    break;
+                case "x":
+                    System.exit(0);
+            }
+        } catch (java.net.SocketException exec) {
+            Storage.addInactive(threadPlayer);
+            this.interrupt();
         }
     }
 
 
-    private void playerMoved(int delta_x, int delta_y, String direction) {
+    private void playerMoved(int delta_x, int delta_y, String direction) throws IOException {
         GameLogic.updatePlayer(delta_x, delta_y, direction, threadPlayer);
+        if (threadPlayer.hasWon()) playerWon();
     }
 
     private void updateOtherThreads() throws IOException {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        Thread mainThread;
         for (Thread thread : threadSet) {
-            if ((thread instanceof ConnectionHandler)) {
+            if (thread instanceof ConnectionHandler) {
                 ConnectionHandler tempHandler = (ConnectionHandler) thread;
                 tempHandler.informClients();
             }
         }
+    }
+
+
+    private void playerWon() throws IOException {
+        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        for (Thread thread : threadSet) {
+            if (thread instanceof ConnectionHandler) {
+                ConnectionHandler tempHandler = (ConnectionHandler) thread;
+                tempHandler.gameEnded(threadPlayer);
+            }
+        }
+
+    }
+
+    private void gameEnded(Player winnerPlayer) throws IOException {
+        outToClient.writeBytes("vinder"
+                + winnerPlayer.getName() + ","
+                + winnerPlayer.getPoint()
+                + "\n");
+        this.interrupt();
 
     }
 

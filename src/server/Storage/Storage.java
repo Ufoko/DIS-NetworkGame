@@ -9,6 +9,7 @@ import java.util.List;
 
 public class Storage {
     private static List<Player> playerList = new ArrayList<Player>();
+    private static List<Player> inactivePlayerList = new ArrayList<>();
 
     private static List<Key> keyList = new ArrayList<>();
 
@@ -16,6 +17,20 @@ public class Storage {
 
     public static void add(Chest c) {
         chestList.add(c);
+    }
+
+    public static void addInactive(Player p) {
+        System.out.println("ADD before: " + inactivePlayerList.size());
+        System.out.println("plist: " + playerList.size());
+        remove(p);
+        inactivePlayerList.add(p);
+    }
+
+    public static void reAddFormerInactive(Player p) {
+        System.out.println("READD before: " + inactivePlayerList.size());
+        System.out.println("plist: " + playerList.size());
+        inactivePlayerList.remove(p);
+        add(p);
     }
 
     public static void add(Player p) {
@@ -51,14 +66,25 @@ public class Storage {
     }
 
     public static List<Player> getPlayers() {
-        return playerList;
+        return new ArrayList<>(playerList);
     }
 
     public static List<Chest> getChests() {
-        return chestList;
+        return new ArrayList<>(chestList);
     }
 
     public static List<Key> getKeys() {
-        return keyList;
+        return new ArrayList<>(keyList);
     }
+
+    public static List<Player> getInactivePlayerList() {
+        return new ArrayList<>(inactivePlayerList);
+    }
+
+    public static void clearStorage() {
+        playerList = new ArrayList<Player>();
+        keyList = new ArrayList<Key>();
+        chestList = new ArrayList<Chest>();
+    }
+
 }

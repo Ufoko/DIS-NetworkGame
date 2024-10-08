@@ -1,4 +1,4 @@
-package Client;
+package Client.Objects;
 
 public class ClientObject {
     private int x;

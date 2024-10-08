@@ -1,5 +1,6 @@
 package server.Model;
 
+import server.Controller.ConnectionHandler;
 import server.Model.Objects.Chest;
 import server.Model.Objects.Key;
 import server.Model.Objects.Pair;
@@ -82,7 +83,8 @@ public class GameLogic {
             boolean move = true;  // Can the player move
             if (colChest != null) { // Is the player trying to move to a chest
                 if (player.hasKey()) { // Does the player have a key
-                    player.addPoints(colChest.getPoint()); // Add points to player
+                    player.addPoints(colChest.getPoint());// Add points to player
+                    player.setKey(false); // Removes key from player
                     Storage.remove(colChest); // Remove the chest from game
                     spawnChest(); // Spawns a new chest
                 } else move = false; // Player doesn't have a key, so can't move to tile
@@ -101,6 +103,7 @@ public class GameLogic {
 
 
     }
+
 
     private static Chest getChestAt(int x, int y) {
         for (Chest chest : Storage.getChests()) {

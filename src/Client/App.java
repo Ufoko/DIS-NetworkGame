@@ -1,5 +1,6 @@
 package Client;
 
+import Client.GUI.LoginScreen;
 import javafx.application.Application;
 
 public class App {

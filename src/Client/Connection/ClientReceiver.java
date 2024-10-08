@@ -1,4 +1,8 @@
-package Client;
+package Client.Connection;
+
+import Client.Objects.ClientObject;
+import Client.Objects.ClientPlayer;
+import Client.GUI.Gui;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
@@ -33,6 +37,11 @@ public class ClientReceiver extends Thread {
                 throw new RuntimeException(e);
             }
             if (input.equals("info")) {
+                try {
+                    input = inFromServer.readLine();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
                 int x = 0, y = 0, points = 0, chestx = 0, chesty = 0, keyx = 0, keyy = 0;
                 String name = "", dir = "", hasKey = "";
                 String[] in = null;

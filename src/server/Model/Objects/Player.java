@@ -3,12 +3,13 @@ package server.Model.Objects;
 import java.net.InetAddress;
 
 public class Player {
-  private  String name;
-    private  Pair location;
-    private   int point;
-    private   String direction;
-    private   InetAddress ipAdress;
-    private    boolean hasKey = false;
+    private static final int WINSCORE = 20;
+    private String name;
+    private Pair location;
+    private int point;
+    private String direction;
+    private InetAddress ipAdress;
+    private boolean hasKey = false;
 
     public Player(String name, Pair loc, String direction, InetAddress ipAdress) {
         this.name = name;
@@ -17,7 +18,6 @@ public class Player {
         this.point = 0;
         this.ipAdress = ipAdress;
     }
-
 
 
     public Pair getLocation() {
@@ -60,9 +60,20 @@ public class Player {
         this.direction = direction;
     }
 
+
+    /***
+     * add points to the player
+     * @param p amount of points given to player
+     * @return true if the player has won
+     */
     public void addPoints(int p) {
         point += p;
     }
+
+    public boolean hasWon() {
+        return point >= WINSCORE;
+    }
+
 
     public String getName() {
         return name;

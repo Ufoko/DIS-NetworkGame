@@ -1,4 +1,6 @@
-package server.Controller;
+package server;
+
+import server.Controller.ConnectionHandler;
 
 import java.net.*;
 public class Server {

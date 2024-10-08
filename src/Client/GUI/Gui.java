@@ -1,6 +1,8 @@
-package Client;
+package Client.GUI;
 
 
+import Client.Objects.ClientObject;
+import Client.Objects.ClientPlayer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -18,7 +20,6 @@ import javafx.stage.Stage;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

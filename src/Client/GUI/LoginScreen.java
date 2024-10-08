@@ -1,5 +1,6 @@
-package Client;
+package Client.GUI;
 
+import Client.Connection.ClientReceiver;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -14,9 +15,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class LoginScreen extends Application {
     TextField txfName, txfIP;
