@@ -104,7 +104,7 @@ public class ConnectionHandler extends Thread {
                     + key.getYPos()
                     + "\n");
         }
-        outToClient.writeBytes("slutK");
+        outToClient.writeBytes("slutK\n");
     }
 
     private void playerMovement() throws IOException {

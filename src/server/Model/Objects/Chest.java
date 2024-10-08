@@ -1,8 +1,8 @@
 package server.Model.Objects;
 
 public class Chest {
-    private  Pair location;
-    private   int point;
+    private Pair location;
+    private int point;
 
     public Chest(Pair location, int point) {
         this.location = location;
@@ -11,11 +11,11 @@ public class Chest {
 
 
     public int getXpos() {
-        return getXpos();
+        return location.getX();
     }
 
-    public int getYPos(){
-        return getYPos();
+    public int getYPos() {
+        return location.getY();
     }
 
 
