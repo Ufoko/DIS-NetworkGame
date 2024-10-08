@@ -1,7 +1,7 @@
 package server;
 
-import server.Controller.ConnectionHandler;
-import server.Model.AiThread;
+import server.Connection.ConnectionHandler;
+import server.Connection.AiThread;
 
 import java.net.*;
 

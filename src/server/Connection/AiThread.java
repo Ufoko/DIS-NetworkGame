@@ -1,7 +1,7 @@
-package server.Model;
+package server.Connection;
 
-import server.Controller.ConnectionHandler;
 import server.Controller.Controller;
+import server.Model.GameLogic;
 import server.Model.Objects.Player;
 
 import java.io.IOException;
@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AiThread extends Thread {
 
-    private final long turnTimerSeconds = 2;
+    private final double turnTimerSeconds = 0.7;
     private Player threadPlayer;
 
     public void run() {
@@ -18,12 +18,12 @@ public class AiThread extends Thread {
         try {
 
             //setup
-            threadPlayer = Controller.newPlayer("Bo", null);
+            threadPlayer = Controller.newConnection("bo", null);
 
 
             //play logic
             while (true) {
-                TimeUnit.SECONDS.sleep(turnTimerSeconds);
+                TimeUnit.MILLISECONDS.sleep((long) (turnTimerSeconds * 1000));
                 ConnectionHandler.updateOtherThreads();
                 moveRandomly();
             }

@@ -1,6 +1,5 @@
 package server.Model;
 
-import server.Controller.ConnectionHandler;
 import server.Model.Objects.Chest;
 import server.Model.Objects.Key;
 import server.Model.Objects.Pair;

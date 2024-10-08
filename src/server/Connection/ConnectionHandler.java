@@ -1,5 +1,6 @@
-package server.Controller;
+package server.Connection;
 
+import server.Controller.Controller;
 import server.Model.GameLogic;
 import server.Model.Objects.Chest;
 import server.Model.Objects.Key;
@@ -26,7 +27,7 @@ public class ConnectionHandler extends Thread {
         try {
 
             this.socket = newSocket;
-            System.out.println(socket.getInetAddress());
+            System.out.println("New Connection: " + socket.getInetAddress());
             inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             outToClient = new DataOutputStream(socket.getOutputStream());
         } catch (IOException e) {
@@ -41,35 +42,15 @@ public class ConnectionHandler extends Thread {
         String playerName = null;
         try {
             playerName = inFromClient.readLine();
-            try {
-                threadPlayer = Storage.getInactivePlayerList().stream().
-                        filter(player -> player.getIpAdress().equals(socket.getInetAddress())).
-                        collect(Collectors.toList()).getFirst();
-
-            } catch (NoSuchElementException e) {
-                System.out.println("Set to null");
-                threadPlayer = null;
-            }
-            if (threadPlayer != null) {
-                Storage.reAddFormerInactive(threadPlayer);
-                threadPlayer.setLocation(GameLogic.getRandomFreePosition());
-            } else {
-                threadPlayer = Controller.newPlayer(playerName, socket.getInetAddress());
-                informClients();
-            }
-
+            threadPlayer = Controller.newConnection(playerName, socket.getInetAddress());
 
             //Concurrent time
             while (true) {
-
-
                 playerMovement();
-
                 updateOtherThreads();
             }
 
         } catch (IOException e) {
-            //Gem data
             e.printStackTrace();
         }
     }
@@ -77,6 +58,31 @@ public class ConnectionHandler extends Thread {
     //"navn,xpos,ypos,direction,point,chestx,chesty,keyx,keyy"
     private synchronized void informClients() throws IOException {
         outToClient.writeBytes("info\n");
+        sendPlayerInfo();
+        sendChestInfo();
+        sendKeyInfo();
+        outToClient.writeBytes("slutK\n");
+    }
+
+    private void sendKeyInfo() throws IOException {
+        for (Key key : Storage.getKeys()) {
+            outToClient.writeBytes(key.getXPos() + ","
+                    + key.getYPos()
+                    + "\n");
+        }
+    }
+
+    private void sendChestInfo() throws IOException {
+        for (Chest chest : Storage.getChests()) {
+            outToClient.writeBytes(chest.getXpos() + ","
+                    + chest.getYPos() + ","
+                    + chest.getPoint()
+                    + "\n");
+        }
+        outToClient.writeBytes("slutC\n");
+    }
+
+    private void sendPlayerInfo() throws IOException {
         for (Player player : Storage.getPlayers()) {
             outToClient.writeBytes(player.getName() + ","
                     + player.getXpos() + ","
@@ -87,19 +93,6 @@ public class ConnectionHandler extends Thread {
                     + "\n");
         }
         outToClient.writeBytes("slutP\n");
-        for (Chest chest : Storage.getChests()) {
-            outToClient.writeBytes(chest.getXpos() + ","
-                    + chest.getYPos() + ","
-                    + chest.getPoint()
-                    + "\n");
-        }
-        outToClient.writeBytes("slutC\n");
-        for (Key key : Storage.getKeys()) {
-            outToClient.writeBytes(key.getXPos() + ","
-                    + key.getYPos()
-                    + "\n");
-        }
-        outToClient.writeBytes("slutK\n");
     }
 
     private void playerMovement() throws IOException {
@@ -126,13 +119,14 @@ public class ConnectionHandler extends Thread {
                     System.exit(0);
             }
         } catch (java.net.SocketException exec) {
-            Storage.addInactive(threadPlayer);
+            Controller.playerLeft(threadPlayer);
             interrupt();
         }
     }
 
 
     private void playerMoved(int delta_x, int delta_y, String direction) throws IOException {
+        //giver ikke mening at flytte til en static controller da den så skal være synchronized
         GameLogic.updatePlayer(delta_x, delta_y, direction, threadPlayer);
         if (GameLogic.checkIfWon(threadPlayer.getPoint())) playerWon();
     }
@@ -149,7 +143,7 @@ public class ConnectionHandler extends Thread {
     }
 
 
-    private void playerWon() throws IOException {
+    public void playerWon( ) throws IOException {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         for (Thread thread : threadSet) {
             if (thread instanceof ConnectionHandler) {
