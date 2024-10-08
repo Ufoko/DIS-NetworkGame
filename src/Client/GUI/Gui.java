@@ -33,7 +33,7 @@ public class Gui extends Stage {
     public static Image image_floor;
     public static Image image_wall;
     public static Image hero_right, hero_left, hero_up, hero_down;
-    public static Image[] chestImages;
+    public static Image[] chestImages = new Image[6];
     public static Image key1;
 
 
