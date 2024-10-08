@@ -63,6 +63,12 @@ public class GameLogic {
                     if (p.getXpos() == x && p.getYpos() == y) //pladsen optaget af en anden
                         foundfreepos = false;
                 }
+                for (Key key : Storage.getKeys()) {
+                    if(key.getXPos() == x && key.getYPos() == y) foundfreepos = false;
+                }
+                for (Chest chest : Storage.getChests()) {
+                    if(chest.getXpos() == x && chest.getYPos() == y) foundfreepos = false;
+                }
             }
         }
         Pair p = new Pair(x, y);
