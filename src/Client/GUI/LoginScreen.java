@@ -24,7 +24,7 @@ public class LoginScreen extends Application {
     DataOutputStream outToServer;
     BufferedReader inFromServer;
     private Gui gui;
-    private String[] illegalNames = {"slutK", "slutP", "slutC", "vinder"};
+    private String[] illegalNames = {"slutK", "slutP", "slutC", "vinder","bo"};
 
     @Override
     public void start(Stage primaryStage) throws Exception {

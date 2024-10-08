@@ -14,6 +14,7 @@ public class GameLogic {
 
     private final static int MAXPOINT = 6;
     private final static int MINPOINT = 1;
+    private static final int WINSCORE = 20;
 
     public static Player newPlayer(String playerName, InetAddress ipAdress) {
         Player newPlayer = new Player(playerName, getRandomFreePosition(), "up", ipAdress);
@@ -64,10 +65,10 @@ public class GameLogic {
                         foundfreepos = false;
                 }
                 for (Key key : Storage.getKeys()) {
-                    if(key.getXPos() == x && key.getYPos() == y) foundfreepos = false;
+                    if (key.getXPos() == x && key.getYPos() == y) foundfreepos = false;
                 }
                 for (Chest chest : Storage.getChests()) {
-                    if(chest.getXpos() == x && chest.getYPos() == y) foundfreepos = false;
+                    if (chest.getXpos() == x && chest.getYPos() == y) foundfreepos = false;
                 }
             }
         }
@@ -82,9 +83,14 @@ public class GameLogic {
         Chest colChest = getChestAt(x + delta_x, y + delta_y);
         Key colKey = getKeyAt(x + delta_x, y + delta_y);
 
-
+        int boTax = 10;
         if (Generel.board[y + delta_y].charAt(x + delta_x) == 'w' || colPlayer != null) {
-
+            if (colPlayer != null && colPlayer.getName().equals("bo")) {
+                player.addPoints(-boTax);
+            }
+            if (colPlayer != null && player.getName().equals("bo")) {
+                colPlayer.addPoints(-boTax);
+            }
         } else {
             boolean move = true;  // Can the player move
             if (colChest != null) { // Is the player trying to move to a chest
@@ -138,4 +144,10 @@ public class GameLogic {
         }
         return null;
     }
+
+    public static boolean checkIfWon(int playerPoint) {
+        return playerPoint >= WINSCORE;
+    }
+
+
 }

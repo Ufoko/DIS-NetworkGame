@@ -3,7 +3,7 @@ package server.Model.Objects;
 import java.net.InetAddress;
 
 public class Player {
-    private static final int WINSCORE = 6;
+
     private String name;
     private Pair location;
     private int point;
@@ -69,11 +69,6 @@ public class Player {
     public void addPoints(int p) {
         point += p;
     }
-
-    public boolean hasWon() {
-        return point >= WINSCORE;
-    }
-
 
     public String getName() {
         return name;

@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 
 public class ConnectionHandler extends Thread {
 
-    Player threadPlayer;
-    BufferedReader inFromClient;
-    DataOutputStream outToClient;
-    Socket socket;
+    private Player threadPlayer;
+    private BufferedReader inFromClient;
+    private DataOutputStream outToClient;
+    private Socket socket;
 
     public ConnectionHandler(Socket newSocket) {
         try {
@@ -41,24 +41,20 @@ public class ConnectionHandler extends Thread {
         String playerName = null;
         try {
             playerName = inFromClient.readLine();
-            // TODO Check om tidligere connection
-            try { //smider exceptions på tom liste, midlertidig løsning så skidtet kører
+            try {
                 threadPlayer = Storage.getInactivePlayerList().stream().
                         filter(player -> player.getIpAdress().equals(socket.getInetAddress())).
                         collect(Collectors.toList()).getFirst();
 
             } catch (NoSuchElementException e) {
+                System.out.println("Set to null");
                 threadPlayer = null;
             }
             if (threadPlayer != null) {
                 Storage.reAddFormerInactive(threadPlayer);
                 threadPlayer.setLocation(GameLogic.getRandomFreePosition());
             } else {
-                threadPlayer = GameLogic.newPlayer(playerName, socket.getInetAddress());
-                //Spawn initial things
-                GameLogic.spawnKey();
-                GameLogic.spawnChest();
-
+                threadPlayer = Controller.newPlayer(playerName, socket.getInetAddress());
                 informClients();
             }
 
@@ -131,17 +127,17 @@ public class ConnectionHandler extends Thread {
             }
         } catch (java.net.SocketException exec) {
             Storage.addInactive(threadPlayer);
-            this.interrupt();
+            interrupt();
         }
     }
 
 
     private void playerMoved(int delta_x, int delta_y, String direction) throws IOException {
         GameLogic.updatePlayer(delta_x, delta_y, direction, threadPlayer);
-        if (threadPlayer.hasWon()) playerWon();
+        if (GameLogic.checkIfWon(threadPlayer.getPoint())) playerWon();
     }
 
-    private void updateOtherThreads() throws IOException {
+    public static void updateOtherThreads() throws IOException {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         Thread mainThread;
         for (Thread thread : threadSet) {

@@ -152,7 +152,7 @@ public class Gui extends Stage {
         }
        int index = 0;
         for (ClientObject chest : chests) {
-            fields[chest.getX()][chest.getY()].setGraphic((new ImageView(chestImages[chestPoints.get(index)])));
+            fields[chest.getX()][chest.getY()].setGraphic((new ImageView(chestImages[chestPoints.get(index)-1])));
             index++;
         }
         for (ClientObject key : keys) {
