@@ -3,7 +3,7 @@ package server.Model.Objects;
 import java.net.InetAddress;
 
 public class Player {
-    private static final int WINSCORE = 20;
+    private static final int WINSCORE = 6;
     private String name;
     private Pair location;
     private int point;
