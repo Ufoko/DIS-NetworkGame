@@ -1,9 +1,9 @@
 package server.Controller;
 
-import javafx.application.Platform;
 import server.Model.GameLogic;
-import server.Model.Pair;
-import server.Model.Player;
+import server.Model.Objects.Chest;
+import server.Model.Objects.Key;
+import server.Model.Objects.Player;
 import server.Storage.Storage;
 
 import java.io.BufferedReader;
@@ -41,12 +41,12 @@ public class ConnectionHandler extends Thread {
         String playerName = null;
         try {
             playerName = inFromClient.readLine();
-            System.out.println(playerName);
             // TODO Check om tidligere connection
             try { //smider exceptions på tom liste, midlertidig løsning så skidtet kører
                 threadPlayer = Storage.getPlayers().stream().
                         filter(player -> player.getIpAdress().equals(socket.getInetAddress())).
                         collect(Collectors.toList()).getFirst();
+
             } catch (NoSuchElementException e) {
                 threadPlayer = null;
             }
@@ -57,7 +57,10 @@ public class ConnectionHandler extends Thread {
                 //TODO fx hvis man ikke må joine midtvejs
             } else {
                 threadPlayer = GameLogic.newPlayer(playerName, socket.getInetAddress());
-                Storage.add(threadPlayer);
+                //Spawn initial things
+                GameLogic.spawnKey();
+                GameLogic.spawnChest();
+
                 informClients();
             }
 
@@ -68,7 +71,6 @@ public class ConnectionHandler extends Thread {
 
                 playerMovement();
 
-
                 updateOtherThreads();
             }
 
@@ -78,24 +80,34 @@ public class ConnectionHandler extends Thread {
         }
     }
 
+    //"navn,xpos,ypos,direction,point,chestx,chesty,keyx,keyy"
     private synchronized void informClients() throws IOException {
-        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
-        for (Thread thread : threadSet) {
-            if (thread instanceof ConnectionHandler) {
-                for (Player player : Storage.getPlayers()) {
-                    outToClient.writeBytes(player.getName() + ","
-                            + threadPlayer.getXpos() + ","
-                            + threadPlayer.getYpos() + ","
-                            + threadPlayer.getDirection() + ","
-                            + threadPlayer.getPoint() + "\n");
-                }
-                outToClient.writeBytes("slut\n");
-            }
+        for (Player player : Storage.getPlayers()) {
+            outToClient.writeBytes(player.getName() + ","
+                    + player.getXpos() + ","
+                    + player.getYpos() + ","
+                    + player.getDirection() + ","
+                    + player.getPoint() + ","
+                    + player.hasKey()
+                    + "\n");
         }
+        outToClient.writeBytes("slutP\n");
+        for (Chest chest : Storage.getChests()) {
+            outToClient.writeBytes(chest.getXpos() + ","
+                    + chest.getYPos() + ","
+                    + chest.getPoint()
+                    + "\n");
+        }
+        outToClient.writeBytes("slutC\n");
+        for (Key key : Storage.getKeys()) {
+            outToClient.writeBytes(key.getXPos() + ","
+                    + key.getYPos()
+                    + "\n");
+        }
+        outToClient.writeBytes("slutK");
     }
 
     private void playerMovement() throws IOException {
-        System.out.println("Movement");
         switch (inFromClient.readLine().toLowerCase()) {
             case "w":
                 playerMoved(0, -1, "up");
@@ -116,8 +128,6 @@ public class ConnectionHandler extends Thread {
             case "x":
                 System.exit(0);
         }
-
-        informClients();
     }
 
 
@@ -125,15 +135,12 @@ public class ConnectionHandler extends Thread {
         GameLogic.updatePlayer(delta_x, delta_y, direction, threadPlayer);
     }
 
-    public void update() throws IOException {
-
-    }
     private void updateOtherThreads() throws IOException {
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         for (Thread thread : threadSet) {
             if ((thread instanceof ConnectionHandler)) {
                 ConnectionHandler tempHandler = (ConnectionHandler) thread;
-                tempHandler.update();
+                tempHandler.informClients();
             }
         }
 

@@ -1,9 +1,5 @@
 package Client;
 
-import server.Model.Pair;
-
-import java.net.InetAddress;
-
 public class ClientPlayer {
     String name;
     int x, y;

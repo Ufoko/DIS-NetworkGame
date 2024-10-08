@@ -1,8 +1,8 @@
-package server.Model;
+package server.Model.Objects;
 
 public class Pair {
-	 int x;
-	 int y;
+	private int x;
+	private int y;
 	public Pair(int x, int y) {
 		super();
 		this.x = x;

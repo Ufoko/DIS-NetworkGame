@@ -1,14 +1,14 @@
-package server.Model;
+package server.Model.Objects;
 
 import java.net.InetAddress;
 
 public class Player {
-    String name;
-    Pair location;
-    int point;
-    String direction;
-    InetAddress ipAdress;
-    boolean hasKey = false;
+  private  String name;
+    private  Pair location;
+    private   int point;
+    private   String direction;
+    private   InetAddress ipAdress;
+    private    boolean hasKey = false;
 
     public Player(String name, Pair loc, String direction, InetAddress ipAdress) {
         this.name = name;
@@ -18,7 +18,7 @@ public class Player {
         this.ipAdress = ipAdress;
     }
 
-    ;
+
 
     public Pair getLocation() {
         return this.location;
@@ -29,19 +29,27 @@ public class Player {
     }
 
     public int getXpos() {
-        return location.x;
+        return location.getX();
+    }
+
+    public void setKey(boolean hasKey) {
+        this.hasKey = hasKey;
+    }
+
+    public boolean hasKey() {
+        return hasKey;
     }
 
     public void setXpos(int xpos) {
-        this.location.x = xpos;
+        this.location.setX(xpos);
     }
 
     public int getYpos() {
-        return location.y;
+        return location.getY();
     }
 
     public void setYpos(int ypos) {
-        this.location.y = ypos;
+        this.location.setY(ypos);
     }
 
     public String getDirection() {
