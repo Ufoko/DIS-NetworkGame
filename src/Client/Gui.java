@@ -121,8 +121,8 @@ public class Gui extends Stage {
                           List<ClientObject> oldChests, List<ClientObject> chests,
                           List<ClientObject> oldKeys, List<ClientObject> keys) {
         Platform.runLater(() -> {
-            updatePlayerLocation(playerList, oldPlayerList);
             updateObjects(oldChests, chests, oldKeys, keys);
+            updatePlayerLocation(playerList, oldPlayerList);
             updateScoreboard(playerList);
         });
     }
