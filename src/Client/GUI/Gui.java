@@ -33,7 +33,7 @@ public class Gui extends Stage {
     public static Image image_floor;
     public static Image image_wall;
     public static Image hero_right, hero_left, hero_up, hero_down;
-    public static Image chest1;
+    public static Image[] chestImages;
     public static Image key1;
 
 
@@ -82,7 +82,11 @@ public class Gui extends Stage {
         hero_down = new Image(getClass().getResourceAsStream("Image/heroDown.png"), size, size, false, false);
 
         key1 = new Image(getClass().getResourceAsStream("Image/key.png"), size, size, false, false);
-        chest1 = new Image(getClass().getResourceAsStream("Image/chest1.png"), size, size, false, false);
+
+        for (int i = 1; i < 7; i++) {
+            chestImages[i - 1] = new Image(getClass().getResourceAsStream("Image/chest" + i + ".png"), size, size, false, false);
+        }
+
         fields = new Label[20][20];
         for (int j = 0; j < 20; j++) {
             for (int i = 0; i < 20; i++) {
@@ -118,36 +122,38 @@ public class Gui extends Stage {
     }
 
     public void ShowWinner(String name, int points) {
-            Platform.runLater(() -> {
-                Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                alert.setTitle("Spillet er ovre");
-                alert.setHeaderText("Vinder er fundet");
-                alert.setContentText("Vinder er " + name + " med " + points + " point");
-                alert.showAndWait();
-            });
+        Platform.runLater(() -> {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Spillet er ovre");
+            alert.setHeaderText("Vinder er fundet");
+            alert.setContentText("Vinder er " + name + " med " + points + " point");
+            alert.showAndWait();
+        });
     }
 
     //afslut med "slut"
     // "navn,xpos,ypos,direction,point"
     public void updateGui(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList,
                           List<ClientObject> oldChests, List<ClientObject> chests,
-                          List<ClientObject> oldKeys, List<ClientObject> keys) {
+                          List<ClientObject> oldKeys, List<ClientObject> keys, List<Integer> chestPoints) {
         Platform.runLater(() -> {
-            updateObjects(oldChests, chests, oldKeys, keys);
+            updateObjects(oldChests, chests, oldKeys, keys, chestPoints);
             updatePlayerLocation(playerList, oldPlayerList);
             updateScoreboard(playerList);
         });
     }
 
-    private void updateObjects(List<ClientObject> oldChests, List<ClientObject> chests, List<ClientObject> oldKeys, List<ClientObject> keys) {
+    private void updateObjects(List<ClientObject> oldChests, List<ClientObject> chests, List<ClientObject> oldKeys, List<ClientObject> keys, List<Integer> chestPoints) {
         for (ClientObject oldChest : oldChests) {
             fields[oldChest.getX()][oldChest.getY()].setGraphic((new ImageView(image_floor)));
         }
         for (ClientObject oldKey : oldKeys) {
             fields[oldKey.getX()][oldKey.getY()].setGraphic((new ImageView(image_floor)));
         }
+       int index = 0;
         for (ClientObject chest : chests) {
-            fields[chest.getX()][chest.getY()].setGraphic((new ImageView(chest1)));
+            fields[chest.getX()][chest.getY()].setGraphic((new ImageView(chestImages[chestPoints.get(index)])));
+            index++;
         }
         for (ClientObject key : keys) {
             fields[key.getX()][key.getY()].setGraphic((new ImageView(key1)));
