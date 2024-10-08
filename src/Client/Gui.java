@@ -31,6 +31,9 @@ public class Gui extends Stage {
     public static Image image_floor;
     public static Image image_wall;
     public static Image hero_right, hero_left, hero_up, hero_down;
+    public static Image chest1;
+    public static Image key1;
+
 
     private static Label[][] fields;
     private TextArea scoreList;
@@ -76,6 +79,8 @@ public class Gui extends Stage {
         hero_up = new Image(getClass().getResourceAsStream("Image/heroUp.png"), size, size, false, false);
         hero_down = new Image(getClass().getResourceAsStream("Image/heroDown.png"), size, size, false, false);
 
+        key1 = new Image(getClass().getResourceAsStream("Image/key.png"), size, size, false, false);
+        chest1 = new Image(getClass().getResourceAsStream("Image/chest1.png"), size, size, false, false);
         fields = new Label[20][20];
         for (int j = 0; j < 20; j++) {
             for (int i = 0; i < 20; i++) {
@@ -112,11 +117,29 @@ public class Gui extends Stage {
 
     //afslut med "slut"
     // "navn,xpos,ypos,direction,point"
-    public void updateGui(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList) {
+    public void updateGui(List<ClientPlayer> playerList, List<ClientPlayer> oldPlayerList,
+                          List<ClientObject> oldChests, List<ClientObject> chests,
+                          List<ClientObject> oldKeys, List<ClientObject> keys) {
         Platform.runLater(() -> {
             updatePlayerLocation(playerList, oldPlayerList);
+            updateObjects(oldChests, chests, oldKeys, keys);
             updateScoreboard(playerList);
         });
+    }
+
+    private void updateObjects(List<ClientObject> oldChests, List<ClientObject> chests, List<ClientObject> oldKeys, List<ClientObject> keys) {
+        for (ClientObject oldChest : oldChests) {
+            fields[oldChest.getX()][oldChest.getY()].setGraphic((new ImageView(image_floor)));
+        }
+        for (ClientObject oldKey : oldKeys) {
+            fields[oldKey.getX()][oldKey.getY()].setGraphic((new ImageView(image_floor)));
+        }
+        for (ClientObject chest : chests) {
+            fields[chest.getX()][chest.getY()].setGraphic((new ImageView(chest1)));
+        }
+        for (ClientObject key : keys) {
+            fields[key.getX()][key.getY()].setGraphic((new ImageView(key1)));
+        }
     }
 
     private void updateScoreboard(List<ClientPlayer> playerList) {

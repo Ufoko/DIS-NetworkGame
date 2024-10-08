@@ -33,4 +33,7 @@ public class ClientPlayer {
     public int getPoint() {
         return point;
     }
+    public String toString() {
+        return this.name +" "+ this.getX() +" "+ this.getY() +" " + this.direction + " " +this.point;
+    }
 }

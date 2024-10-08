@@ -62,7 +62,6 @@ public class GameLogic {
                     if (p.getXpos() == x && p.getYpos() == y) //pladsen optaget af en anden
                         foundfreepos = false;
                 }
-
             }
         }
         Pair p = new Pair(x, y);
@@ -130,6 +129,4 @@ public class GameLogic {
         }
         return null;
     }
-
-
 }
