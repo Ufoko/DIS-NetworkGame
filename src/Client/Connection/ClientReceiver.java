@@ -28,6 +28,7 @@ public class ClientReceiver extends Thread {
         List<ClientObject> oldChests = new ArrayList<>();
         List<ClientObject> oldKeys = new ArrayList<>();
         List<ClientObject> chests = new ArrayList<>();
+        List<Integer> chestPoints = new ArrayList<>();
         List<ClientObject> keys = new ArrayList<>();
         while (true) {
             String input = null;
@@ -69,6 +70,7 @@ public class ClientReceiver extends Thread {
                     in = input.split(",");
                     chestx = Integer.parseInt(in[0]);
                     chesty = Integer.parseInt(in[1]);
+                    chestPoints.add(Integer.parseInt(in[2]));
                     chests.add(new ClientObject(chestx, chesty));
                     try {
                         input = inFromServer.readLine();
@@ -93,7 +95,7 @@ public class ClientReceiver extends Thread {
                     }
                 }
                 gui.updateGui(new ArrayList<>(playerList), new ArrayList<>(oldPlayerList), new ArrayList<>(oldChests),
-                        new ArrayList<>(chests), new ArrayList<>(oldKeys), new ArrayList<>(keys));
+                        new ArrayList<>(chests), new ArrayList<>(oldKeys), new ArrayList<>(keys), new ArrayList<>(chestPoints));
                 oldChests = new ArrayList<>(chests);
                 oldKeys = new ArrayList<>(keys);
                 oldPlayerList = new ArrayList<>(playerList);
