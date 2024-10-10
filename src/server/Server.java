@@ -20,6 +20,7 @@ public class Server {
             cHandler.start();
             if (!gameStartet) {
                 new AiThread().start();
+                gameStartet = true;
             }
         }
     }
