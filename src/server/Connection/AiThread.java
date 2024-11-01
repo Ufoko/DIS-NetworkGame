@@ -56,5 +56,20 @@ public class AiThread extends Thread {
 
     }
 
+    private void weightedMovement() {
+        Random rand = new Random();
+        String[] dirs = {"up", "down", "left", "right"};
+
+        int topWeight = 0;
+        int rightWeight = 0;
+
+        for (String dir : dirs) {
+            if (Controller.checkDirection(threadPlayer, dir)) {
+
+            }
+        }
+
+    }
+
 
 }
